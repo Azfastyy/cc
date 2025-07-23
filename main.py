@@ -39,7 +39,7 @@ class LoginWindow(QWidget):
         password = self.pass_input.text()
         try:
             response = requests.post(
-                "https://monapp.vercel.app/check",
+                "https://nm-api.vercel.app/check",
                 json={"username": username, "password": password},
                 timeout=5
             )
