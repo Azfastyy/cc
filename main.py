@@ -3,7 +3,7 @@ import requests
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox
 )
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QObject
 import psutil  # pip install psutil
 
 class LoginWindow(QWidget):
@@ -91,8 +91,10 @@ class MenuWindow(QWidget):
                 self.close()
                 break
 
-class AppController:
+
+class AppController(QObject):  # Hérite de QObject pour installEventFilter
     def __init__(self):
+        super().__init__()  # Initialise QObject
         self.app = QApplication(sys.argv)
         self.login_window = LoginWindow()
         self.login_window.show()
@@ -112,6 +114,7 @@ class AppController:
 
     def run(self):
         sys.exit(self.app.exec())
+
 
 if __name__ == "__main__":
     controller = AppController()
