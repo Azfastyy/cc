@@ -4,7 +4,8 @@ from PyQt6.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QFrame
 )
-from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QFont
+from PyQt6.QtCore import Qt, QTimer, QCoreApplication
 
 
 class LoginWindow(QWidget):
@@ -12,9 +13,8 @@ class LoginWindow(QWidget):
         super().__init__()
         self.setWindowTitle("NM SOFTWARE")
         self.setFixedSize(300, 280)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Supprime la barre du haut
         self.setStyleSheet("background-color: #111111; color: white;")
-        self.setWindowFlag(Qt.WindowType.FramelessWindowHint)  # ⛔️ Enlève la barre
-
         self.init_ui()
 
     def init_ui(self):
@@ -30,11 +30,11 @@ class LoginWindow(QWidget):
 
         layout.addSpacing(20)
 
-        # Username field
+        # Username field with icon
         self.username = self.create_input("username", "👤")
         layout.addWidget(self.username)
 
-        # Password field
+        # Password field with icon
         self.password = self.create_input("password", "🔒", password=True)
         layout.addWidget(self.password)
 
@@ -108,22 +108,21 @@ class LoginWindow(QWidget):
                 json={"username": username, "password": password},
                 timeout=5
             )
-            if response.status_code != 200:
-                QMessageBox.warning(self, "Erreur", f"Serveur injoignable ({response.status_code})")
-                return
 
+            # Vérifie si le serveur répond bien en JSON
             try:
                 data = response.json()
             except Exception:
-                QMessageBox.warning(self, "Erreur", "Réponse invalide du serveur.")
+                QMessageBox.warning(self, "Erreur", f"Erreur serveur : {response.status_code}\nRéponse invalide.")
                 return
 
             if data.get("success") or data.get("user"):
                 self.open_menu()
             else:
                 QMessageBox.warning(self, "Erreur", "Identifiants invalides.")
+
         except requests.exceptions.RequestException as e:
-            QMessageBox.warning(self, "Erreur", f"Connexion impossible:\n{e}")
+            QMessageBox.warning(self, "Erreur", f"Connexion impossible :\n{str(e)}")
 
     def open_menu(self):
         self.menu_window = MenuWindow()
@@ -134,11 +133,12 @@ class LoginWindow(QWidget):
 class MenuWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("NM Panel")
+        self.setWindowTitle("NM SOFTWARE")
         self.setFixedSize(400, 200)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Pas de barre ici non plus
         self.setStyleSheet("background-color: #111; color: white;")
         layout = QVBoxLayout()
-        label = QLabel("Connexion réussie.")
+        label = QLabel("✅ Connecté avec succès.")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(label)
         self.setLayout(layout)
