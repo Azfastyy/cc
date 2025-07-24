@@ -1,11 +1,13 @@
 import sys
 import requests
+import psutil
+import threading
+import keyboard
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QFrame
 )
-from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, QTimer
 
 
 class LoginWindow(QWidget):
@@ -21,7 +23,7 @@ class LoginWindow(QWidget):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        # Close button (croix)
+        # Croix
         close_btn = QPushButton("✕")
         close_btn.setStyleSheet("""
             QPushButton {
@@ -38,13 +40,12 @@ class LoginWindow(QWidget):
         close_btn.setFixedSize(30, 30)
         close_btn.clicked.connect(self.close)
 
-        close_layout = QHBoxLayout()
-        close_layout.addStretch()
-        close_layout.addWidget(close_btn)
+        top_layout = QHBoxLayout()
+        top_layout.addStretch()
+        top_layout.addWidget(close_btn)
+        layout.addLayout(top_layout)
 
-        layout.addLayout(close_layout)
-
-        # Title
+        # Titre
         title = QLabel("NM <span style='color: #60f5ff;'>SOFTWARE</span>")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("font-size: 18px; font-weight: bold;")
@@ -53,15 +54,14 @@ class LoginWindow(QWidget):
 
         layout.addSpacing(20)
 
-        # Username field
+        # Champs
         self.username = self.create_input("username", "👤")
         layout.addWidget(self.username)
 
-        # Password field
         self.password = self.create_input("password", "🔒", password=True)
         layout.addWidget(self.password)
 
-        # Launch button
+        # Bouton LAUNCH
         launch_btn = QPushButton("LAUNCH")
         launch_btn.setStyleSheet("""
             QPushButton {
@@ -161,11 +161,18 @@ class MenuWindow(QWidget):
         self.setStyleSheet("background-color: #111; color: white;")
         self.init_ui()
 
+        # Lancement de la surveillance du processus
+        self.check_roblox_thread = threading.Thread(target=self.check_roblox_running, daemon=True)
+        self.check_roblox_thread.start()
+
+        # Lancement de l'écoute F5
+        self.listen_f5_thread = threading.Thread(target=self.listen_f5_key, daemon=True)
+        self.listen_f5_thread.start()
+
     def init_ui(self):
         layout = QVBoxLayout()
         layout.setAlignment(Qt.AlignmentFlag.AlignTop)
 
-        # Close button
         close_btn = QPushButton("✕")
         close_btn.setStyleSheet("""
             QPushButton {
@@ -187,7 +194,6 @@ class MenuWindow(QWidget):
         close_layout.addWidget(close_btn)
         layout.addLayout(close_layout)
 
-        # Roblox Cheat title
         label = QLabel("Roblox Cheat")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         label.setStyleSheet("font-size: 20px; font-weight: bold; color: #60f5ff;")
@@ -195,7 +201,6 @@ class MenuWindow(QWidget):
 
         layout.addSpacing(20)
 
-        # LOAD button
         load_btn = QPushButton("LOAD")
         load_btn.setStyleSheet("""
             QPushButton {
@@ -213,7 +218,6 @@ class MenuWindow(QWidget):
         load_btn.clicked.connect(self.show_please_open)
         layout.addWidget(load_btn, alignment=Qt.AlignmentFlag.AlignCenter)
 
-        # Message
         self.msg = QLabel("")
         self.msg.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.msg.setStyleSheet("font-size: 14px; color: #aaaaaa;")
@@ -224,6 +228,20 @@ class MenuWindow(QWidget):
 
     def show_please_open(self):
         self.msg.setText("Please open the game")
+
+    def check_roblox_running(self):
+        while True:
+            if any(proc.name().lower() == "robloxplayerbeta.exe" for proc in psutil.process_iter()):
+                self.close()
+                break
+
+    def listen_f5_key(self):
+        keyboard.wait("F5")
+        self.show_cheat_menu()
+
+    def show_cheat_menu(self):
+        # Tu peux ouvrir un menu custom ici
+        QMessageBox.information(self, "Cheat Menu", "Cheat menu ouvert (simulation).")
 
 
 if __name__ == "__main__":
