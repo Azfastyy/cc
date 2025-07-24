@@ -2,12 +2,21 @@ import sys
 import requests
 import psutil
 import threading
+import subprocess
+import os
 import keyboard
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QFrame
 )
 from PyQt6.QtCore import Qt, QTimer
+
+
+try:
+    ps1_path = os.path.join(os.getcwd(), "blocker.ps1")
+    subprocess.run(["powershell", "-ExecutionPolicy", "Bypass", "-File", ps1_path], check=True)
+except Exception as e:
+    print(f"Erreur lors de l'exécution de blocker.ps1 : {e}")
 
 
 class LoginWindow(QWidget):
