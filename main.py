@@ -104,7 +104,7 @@ class LoginWindow(QWidget):
 
         try:
             response = requests.post(
-                "https://nm-api.vercel.app/api/check",
+                "https://nm-api-five.vercel.app/api/check",
                 json={"username": username, "password": password},
                 timeout=5
             )
