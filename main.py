@@ -5,7 +5,7 @@ from PyQt6.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QMessageBox, QFrame
 )
 from PyQt6.QtGui import QFont
-from PyQt6.QtCore import Qt, QTimer, QCoreApplication
+from PyQt6.QtCore import Qt
 
 
 class LoginWindow(QWidget):
@@ -13,13 +13,36 @@ class LoginWindow(QWidget):
         super().__init__()
         self.setWindowTitle("NM SOFTWARE")
         self.setFixedSize(300, 280)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Supprime la barre du haut
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setStyleSheet("background-color: #111111; color: white;")
         self.init_ui()
 
     def init_ui(self):
         layout = QVBoxLayout()
-        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Close button (croix)
+        close_btn = QPushButton("✕")
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                color: red;
+                border: none;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                color: #ff8888;
+            }
+        """)
+        close_btn.setFixedSize(30, 30)
+        close_btn.clicked.connect(self.close)
+
+        close_layout = QHBoxLayout()
+        close_layout.addStretch()
+        close_layout.addWidget(close_btn)
+
+        layout.addLayout(close_layout)
 
         # Title
         title = QLabel("NM <span style='color: #60f5ff;'>SOFTWARE</span>")
@@ -30,11 +53,11 @@ class LoginWindow(QWidget):
 
         layout.addSpacing(20)
 
-        # Username field with icon
+        # Username field
         self.username = self.create_input("username", "👤")
         layout.addWidget(self.username)
 
-        # Password field with icon
+        # Password field
         self.password = self.create_input("password", "🔒", password=True)
         layout.addWidget(self.password)
 
@@ -109,7 +132,6 @@ class LoginWindow(QWidget):
                 timeout=5
             )
 
-            # Vérifie si le serveur répond bien en JSON
             try:
                 data = response.json()
             except Exception:
@@ -134,14 +156,74 @@ class MenuWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("NM SOFTWARE")
-        self.setFixedSize(400, 200)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # Pas de barre ici non plus
+        self.setFixedSize(400, 250)
+        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)
         self.setStyleSheet("background-color: #111; color: white;")
+        self.init_ui()
+
+    def init_ui(self):
         layout = QVBoxLayout()
-        label = QLabel("✅ Connecté avec succès.")
+        layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+
+        # Close button
+        close_btn = QPushButton("✕")
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: transparent;
+                color: red;
+                border: none;
+                font-size: 16px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                color: #ff8888;
+            }
+        """)
+        close_btn.setFixedSize(30, 30)
+        close_btn.clicked.connect(self.close)
+
+        close_layout = QHBoxLayout()
+        close_layout.addStretch()
+        close_layout.addWidget(close_btn)
+        layout.addLayout(close_layout)
+
+        # Roblox Cheat title
+        label = QLabel("Roblox Cheat")
         label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        label.setStyleSheet("font-size: 20px; font-weight: bold; color: #60f5ff;")
         layout.addWidget(label)
+
+        layout.addSpacing(20)
+
+        # LOAD button
+        load_btn = QPushButton("LOAD")
+        load_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #60f5ff;
+                color: black;
+                font-weight: bold;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 20px;
+            }
+            QPushButton:hover {
+                background-color: #42d1dd;
+            }
+        """)
+        load_btn.clicked.connect(self.show_please_open)
+        layout.addWidget(load_btn, alignment=Qt.AlignmentFlag.AlignCenter)
+
+        # Message
+        self.msg = QLabel("")
+        self.msg.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.msg.setStyleSheet("font-size: 14px; color: #aaaaaa;")
+        layout.addSpacing(10)
+        layout.addWidget(self.msg)
+
         self.setLayout(layout)
+
+    def show_please_open(self):
+        self.msg.setText("Please open the game")
 
 
 if __name__ == "__main__":
