@@ -230,10 +230,13 @@ class MenuWindow(QWidget):
         self.msg.setText("Please open the game")
 
     def check_roblox_running(self):
-        while True:
-            if any(proc.name().lower() == "robloxplayerbeta.exe" for proc in psutil.process_iter()):
+    while True:
+        for proc in psutil.process_iter(['name']):
+            if proc.info['name'] and proc.info['name'].lower() == "robloxplayerbeta.exe":
+                # ✅ Roblox détecté : on ferme la fenêtre, on injecte
                 self.close()
-                break
+                subprocess.Popen(["injector.exe"])
+                return
 
     def listen_f5_key(self):
         keyboard.wait("F5")
