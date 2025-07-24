@@ -11,7 +11,7 @@ from PyQt6.QtCore import Qt
 class LoginWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("KEYSER SOFTWARE")
+        self.setWindowTitle("NM SOFTWARE")
         self.setFixedSize(300, 280)
         self.setStyleSheet("background-color: #111111; color: white;")
         self.init_ui()
@@ -21,7 +21,7 @@ class LoginWindow(QWidget):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         # Title
-        title = QLabel("KEYSER <span style='color: #60f5ff;'>SOFTWARE</span>")
+        title = QLabel("NM <span style='color: #60f5ff;'>SOFTWARE</span>")
         title.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title.setStyleSheet("font-size: 18px; font-weight: bold;")
         title.setTextFormat(Qt.TextFormat.RichText)
@@ -30,11 +30,11 @@ class LoginWindow(QWidget):
         layout.addSpacing(20)
 
         # Username field with icon
-        self.username = self.create_input("menu93", "👤")
+        self.username = self.create_input("username", "👤")
         layout.addWidget(self.username)
 
         # Password field with icon
-        self.password = self.create_input("••••••••", "🔒", password=True)
+        self.password = self.create_input("password", "🔒", password=True)
         layout.addWidget(self.password)
 
         # Launch button
